@@ -1,0 +1,35 @@
+local UI = loadstring(game:HttpGet('https://raw.githubusercontent.com/Footagesus/WindUI/refs/heads/main/main_example.lua'))()
+local Players = game:GetService(“Players”) local LocalPlayer =
+Players.LocalPlayer
+
+local function applyESP(plr) if plr == LocalPlayer then return end local
+function add(char) if char:FindFirstChild(“ESPHighlight”) then return
+end local h=Instance.new(“Highlight”) h.Name=“ESPHighlight”
+h.FillTransparency=0.5 h.OutlineTransparency=0 h.Adornee=char
+h.Parent=char end if plr.Character then add(plr.Character) end
+plr.CharacterAdded:Connect(add) end
+
+local espEnabled=false local function setESP(state) espEnabled=state for
+_,p in ipairs(Players:GetPlayers()) do if p~=LocalPlayer then if state
+then applyESP(p) elseif p.Character then local
+h=p.Character:FindFirstChild(“ESPHighlight”) if h then h:Destroy() end
+end end end end
+
+Players.PlayerAdded:Connect(function(p) if espEnabled then applyESP(p)
+end end)
+
+local Tab=Window:Tab({Title=“Player”,Icon=“user”})
+
+Tab:Slider({ Title=“WalkSpeed”, Step=1,
+Value={Min=16,Max=100,Default=16}, Callback=function(v) local
+c=LocalPlayer.Character local hum=c and
+c:FindFirstChildOfClass(“Humanoid”) if hum then hum.WalkSpeed=v end end
+})
+
+Tab:Slider({ Title=“JumpPower”, Step=1,
+Value={Min=50,Max=200,Default=50}, Callback=function(v) local
+c=LocalPlayer.Character local hum=c and
+c:FindFirstChildOfClass(“Humanoid”) if hum then hum.UseJumpPower=true
+hum.JumpPower=v end end })
+
+Tab:Toggle({ Title=“Player ESP”, Callback=function(v) setESP(v) end })
